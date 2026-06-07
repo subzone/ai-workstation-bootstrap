@@ -237,9 +237,17 @@ sed "s/qwen3.5:4b/$PRIMARY_MODEL/g" "$CONFIG_SOURCE/opencode/config.json" > "$OP
 cp "$CONFIG_SOURCE/opencode/mcp-servers.json" "$OPENCODE_DIR/mcp-servers.json"
 log "OpenCode configured."
 
-# ─── Standup + switch-model utilities ───
+# ─── Standup + code-rag + switch-model utilities ───
 TOOLS_BIN="$HOME/.local/bin"
 mkdir -p "$TOOLS_BIN"
+
+# code-rag CLI
+cat > "$TOOLS_BIN/code-rag" << WRAPPER
+#!/bin/bash
+exec uv run --directory ~/.ai-bootstrap/repo/tools/code-rag python3 code_rag.py "\$@"
+WRAPPER
+chmod +x "$TOOLS_BIN/code-rag"
+log "code-rag CLI installed."
 
 if $INSTALL_STANDUP; then
     cp "$SCRIPT_DIR/../tools/standup/standup.py" "$TOOLS_BIN/standup.py"

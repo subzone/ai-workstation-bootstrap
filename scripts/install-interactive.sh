@@ -205,7 +205,17 @@ print(f"MCP config: {len(servers)} servers", file=sys.stderr)
 PYEOF
 log "MCP config written."
 
-# ─── Standup Tool ───
+# ─── Standup + code-rag + switch-model utilities ───
+TOOLS_BIN="$HOME/.local/bin"
+mkdir -p "$TOOLS_BIN"
+
+# code-rag CLI
+cat > "$TOOLS_BIN/code-rag" << WRAPPER
+#!/bin/bash
+exec uv run --directory ~/.ai-bootstrap/repo/tools/code-rag python3 code_rag.py "\$@"
+WRAPPER
+chmod +x "$TOOLS_BIN/code-rag"
+log "code-rag CLI installed."
 if $INSTALL_STANDUP; then
     STANDUP_DIR="$HOME/.local/bin"
     mkdir -p "$STANDUP_DIR"
