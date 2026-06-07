@@ -63,10 +63,25 @@ ai-workstation-bootstrap/
    - GPU present (WMI: `Win32_VideoController WHERE AdapterRAM > 4294967296`)
 6. **Assignment:** Required → `Engineering_Team` group
 
+## Quick Install
+
+### macOS
+```bash
+bash <(curl -fsSL https://raw.githubusercontent.com/subzone/ai-workstation-bootstrap/main/scripts/install-interactive.sh)
+```
+
 ### Linux (Ubuntu/Debian/Fedora)
 ```bash
 bash <(curl -fsSL https://raw.githubusercontent.com/subzone/ai-workstation-bootstrap/main/scripts/install-ubuntu.sh)
 ```
+
+### Windows (PowerShell as Admin)
+```powershell
+irm https://raw.githubusercontent.com/subzone/ai-workstation-bootstrap/main/scripts/install-windows.ps1 | iex
+```
+
+### Windows via Intune (enterprise deployment)
+See [Intune Deployment](#deployment-via-microsoft-intune) below.
 
 ## Security & Compliance
 

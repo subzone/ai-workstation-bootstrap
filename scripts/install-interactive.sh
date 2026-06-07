@@ -1,13 +1,23 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# AI Workstation Bootstrap — Interactive Installer
-# Developers choose which tools to install based on their role
+# AI Workstation Bootstrap — Interactive Installer (macOS)
+# Run: bash <(curl -fsSL https://raw.githubusercontent.com/subzone/ai-workstation-bootstrap/main/scripts/install-interactive.sh)
 
 LOG_DIR="$HOME/.ai-bootstrap"
 LOG_FILE="$LOG_DIR/install.log"
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-CONFIG_SOURCE="$SCRIPT_DIR/../configs"
+mkdir -p "$LOG_DIR"
+
+# Resolve config source — clone repo if not running from local checkout
+REPO_DIR="$LOG_DIR/repo"
+SCRIPT_DIR="${REPO_DIR}/scripts"
+CONFIG_SOURCE="${REPO_DIR}/configs"
+
+if [ ! -d "$CONFIG_SOURCE" ]; then
+    echo "📦 Downloading bootstrap repository..."
+    rm -rf "$REPO_DIR"
+    git clone --depth 1 https://github.com/subzone/ai-workstation-bootstrap.git "$REPO_DIR"
+fi
 
 mkdir -p "$LOG_DIR"
 log() { echo "$(date '+%Y-%m-%d %H:%M:%S')  $*" | tee -a "$LOG_FILE"; }

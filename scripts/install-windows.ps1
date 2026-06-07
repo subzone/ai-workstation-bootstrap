@@ -1,16 +1,27 @@
 #Requires -RunAsAdministrator
 <#
 .SYNOPSIS
-    AI Workstation Bootstrap — Windows (Intune deployment)
+    AI Workstation Bootstrap — Windows
 .DESCRIPTION
     Silently installs and configures local-first AI developer tools.
-    Designed to run as SYSTEM via Intune Win32 app deployment.
+    Run: irm https://raw.githubusercontent.com/subzone/ai-workstation-bootstrap/main/scripts/install-windows.ps1 | iex
+    Or via Intune as Win32 app.
 #>
 
 $ErrorActionPreference = "Stop"
-$LogDir = "C:\ProgramData\ai-bootstrap"
+$LogDir = "$env:USERPROFILE\.ai-bootstrap"
+$RepoDir = "$LogDir\repo"
 $LogFile = "$LogDir\install.log"
-$ConfigSource = "$PSScriptRoot\..\configs"
+
+New-Item -ItemType Directory -Path $LogDir -Force | Out-Null
+
+# Clone repo if configs not available locally
+if (-not (Test-Path "$RepoDir\configs")) {
+    Write-Host "Downloading bootstrap repository..."
+    if (Test-Path $RepoDir) { Remove-Item $RepoDir -Recurse -Force }
+    git clone --depth 1 https://github.com/subzone/ai-workstation-bootstrap.git $RepoDir 2>&1 | Out-Null
+}
+$ConfigSource = "$RepoDir\configs"
 
 # --- Logging ---
 New-Item -ItemType Directory -Path $LogDir -Force | Out-Null
