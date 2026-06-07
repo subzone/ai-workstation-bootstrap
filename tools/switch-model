@@ -1,0 +1,66 @@
+#!/bin/bash
+# switch-model — Reconfigure all AI tools to use a different model
+# Usage: switch-model <model-name>
+#   e.g: switch-model glm4:9b
+#        switch-model deepseek-v3:7b
+#        switch-model mistral:7b
+
+set -euo pipefail
+
+MODEL="${1:?Usage: switch-model <model-name>}"
+
+echo "🔄 Switching all tools to: $MODEL"
+echo ""
+
+# Pull if not present
+if ! ollama list 2>/dev/null | grep -q "^${MODEL}"; then
+    echo "⬇️  Pulling $MODEL..."
+    ollama pull "$MODEL"
+fi
+
+# OpenCode
+if [ -f "$HOME/.opencode/.opencode.json" ]; then
+    python3 -c "
+import json
+p='$HOME/.opencode/.opencode.json'
+d=json.load(open(p)); d['model']='$MODEL'
+json.dump(d, open(p,'w'), indent=2)
+" && echo "✅ OpenCode → $MODEL"
+fi
+
+# VS Code Continue
+VSCODE_SETTINGS="$HOME/Library/Application Support/Code/User/settings.json"
+if [ -f "$VSCODE_SETTINGS" ]; then
+    python3 -c "
+import json
+p='$VSCODE_SETTINGS'
+d=json.load(open(p))
+if 'continue.models' in d and d['continue.models']:
+    d['continue.models'][0]['model']='$MODEL'
+    d['continue.models'][0]['title']='$MODEL (Local)'
+json.dump(d, open(p,'w'), indent=2)
+" && echo "✅ VS Code Continue → $MODEL"
+fi
+
+# Environment variables for CLI tools
+SHELL_RC="$HOME/.zshrc"
+[ -f "$HOME/.bashrc" ] && [ ! -f "$HOME/.zshrc" ] && SHELL_RC="$HOME/.bashrc"
+
+for VAR in STANDUP_MODEL CODE_REVIEW_MODEL; do
+    if grep -q "^export $VAR=" "$SHELL_RC" 2>/dev/null; then
+        sed -i '' "s|^export $VAR=.*|export $VAR=\"$MODEL\"|" "$SHELL_RC"
+    else
+        echo "export $VAR=\"$MODEL\"" >> "$SHELL_RC"
+    fi
+done
+echo "✅ Shell env (STANDUP_MODEL, CODE_REVIEW_MODEL) → $MODEL"
+
+# OpenSteva (if installed)
+if [ -f "$HOME/.opensteva/config.toml" ]; then
+    sed -i '' "s|^default_model = .*|default_model = \"$MODEL\"|" "$HOME/.opensteva/config.toml"
+    echo "✅ OpenSteva → $MODEL"
+fi
+
+echo ""
+echo "Done. Restart your terminal: source $SHELL_RC"
+echo "Available models: ollama list"

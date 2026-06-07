@@ -59,6 +59,32 @@ INSTALL_STANDUP=false; INSTALL_MEETILY=false
 ask "Automated Standups (git+jira→standup)" "y" && INSTALL_STANDUP=true
 ask "Meeting Transcription (Meetily)" "n" && INSTALL_MEETILY=true
 
+# ─── Model Selection ───
+echo ""
+echo -e "${YELLOW}── Model Selection ──${NC}"
+echo "  Choose your primary chat/coding model:"
+echo "    1) qwen3.5:4b      — 3.2GB, fast, good all-rounder (default)"
+echo "    2) qwen3.5:9b      — 6.3GB, better reasoning"
+echo "    3) glm4:9b         — 5.5GB, strong bilingual"
+echo "    4) deepseek-v3:7b  — 4.2GB, strong code + reasoning"
+echo "    5) mistral:7b      — 4.1GB, European language support"
+echo "    6) granite3.1-dense:8b — 4.9GB, enterprise (IBM)"
+echo "    7) llama3.2:3b     — 2.0GB, lightweight/low-RAM"
+echo "    8) gemma3:4b       — 3.3GB, Google compact"
+read -rp "$(echo -e "${BLUE}  Select [1-8, default 1]:${NC} ")" model_choice
+
+case "${model_choice:-1}" in
+    2) PRIMARY_MODEL="qwen3.5:9b" ;;
+    3) PRIMARY_MODEL="glm4:9b" ;;
+    4) PRIMARY_MODEL="deepseek-v3:7b" ;;
+    5) PRIMARY_MODEL="mistral:7b" ;;
+    6) PRIMARY_MODEL="granite3.1-dense:8b" ;;
+    7) PRIMARY_MODEL="llama3.2:3b" ;;
+    8) PRIMARY_MODEL="gemma3:4b" ;;
+    *) PRIMARY_MODEL="qwen3.5:4b" ;;
+esac
+echo -e "  Selected: ${GREEN}$PRIMARY_MODEL${NC}"
+
 echo ""
 echo -e "${GREEN}Starting installation...${NC}"
 log "=== AI Workstation Bootstrap started ==="
@@ -74,18 +100,20 @@ log "Ollama: $(ollama --version)"
 pgrep -x ollama >/dev/null || (ollama serve &>/dev/null &); sleep 3
 
 log "Pulling models..."
-ollama pull qwen3.5:4b 2>/dev/null
+ollama pull "$PRIMARY_MODEL" 2>/dev/null
 ollama pull qwen2.5-coder:1.5b 2>/dev/null
 ollama pull nomic-embed-text 2>/dev/null
-log "Models ready."
+log "Models ready: $PRIMARY_MODEL + qwen2.5-coder:1.5b + nomic-embed-text"
 
 # ─── IDE Installs ───
 if $INSTALL_VSCODE; then
     brew install --cask visual-studio-code 2>/dev/null || true
     mkdir -p "$HOME/Library/Application Support/Code/User"
-    cp "$CONFIG_SOURCE/vscode/settings.json" "$HOME/Library/Application Support/Code/User/settings.json"
+    # Inject config with selected model
+    sed "s/qwen3.5:4b/$PRIMARY_MODEL/g" "$CONFIG_SOURCE/vscode/settings.json" \
+        > "$HOME/Library/Application Support/Code/User/settings.json"
     code --install-extension Continue.continue 2>/dev/null || true
-    log "VS Code + Continue configured."
+    log "VS Code + Continue configured with $PRIMARY_MODEL."
 fi
 
 if $INSTALL_INTELLIJ; then
@@ -142,7 +170,8 @@ fi
 # ─── MCP Servers Config ───
 OPENCODE_DIR="$HOME/.opencode"
 mkdir -p "$OPENCODE_DIR"
-cp "$CONFIG_SOURCE/opencode/.opencode.json" "$OPENCODE_DIR/.opencode.json"
+sed "s/qwen3.5:4b/$PRIMARY_MODEL/g" "$CONFIG_SOURCE/opencode/.opencode.json" \
+    > "$OPENCODE_DIR/.opencode.json"
 
 # Build MCP config dynamically based on selections
 MCP_CONFIG='{"mcpServers":{'
