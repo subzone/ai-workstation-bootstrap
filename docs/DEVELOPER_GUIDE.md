@@ -106,3 +106,18 @@ OpenCode connects to corporate tools via MCP servers:
 ## Feedback
 
 If the AI gives consistently bad answers for your domain (e.g., company-specific frameworks), let your team lead know — we can fine-tune the local model on approved internal docs.
+
+## Additional Tools
+
+Local AI-powered developer tools (all use Ollama, no external calls):
+
+| Tool | Description | Usage |
+|------|-------------|-------|
+| **code-review** | LLM code review on staged changes | `git diff --staged \| python3 tools/code-review/review.py` |
+| **security-scan** | Regex + LLM scan for secrets, SQLi, XSS | `git diff --staged \| python3 tools/security-scan/scan.py` |
+| **log-explainer** | Root cause analysis for stack traces | `cat error.log \| python3 tools/log-explainer/explain.py` |
+| **sprint-report** | Weekly git activity summary for managers | `python3 tools/sprint-report/report.py --days 7` |
+| **dep-audit** | Dependency vulnerability audit + LLM summary | `python3 tools/dep-audit/audit.py /path/to/project` |
+| **test-gen** | Auto-generate unit tests for a file | `python3 tools/test-gen/generate.py src/utils.py` |
+
+See [docs/TOOLS_GUIDE.md](./TOOLS_GUIDE.md) for full details and pre-commit hook setup.
