@@ -1,0 +1,215 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# AI Workstation Bootstrap — Interactive Installer
+# Developers choose which tools to install based on their role
+
+LOG_DIR="$HOME/.ai-bootstrap"
+LOG_FILE="$LOG_DIR/install.log"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+CONFIG_SOURCE="$SCRIPT_DIR/../configs"
+
+mkdir -p "$LOG_DIR"
+log() { echo "$(date '+%Y-%m-%d %H:%M:%S')  $*" | tee -a "$LOG_FILE"; }
+
+# ─── Colors ───
+GREEN='\033[0;32m'; BLUE='\033[0;34m'; YELLOW='\033[1;33m'; NC='\033[0m'
+
+ask() {
+    local prompt="$1" default="${2:-y}"
+    if [[ "$default" == "y" ]]; then
+        read -rp "$(echo -e "${BLUE}$prompt [Y/n]:${NC} ")" answer
+        [[ "${answer:-y}" =~ ^[Yy]?$ ]]
+    else
+        read -rp "$(echo -e "${BLUE}$prompt [y/N]:${NC} ")" answer
+        [[ "${answer:-n}" =~ ^[Yy]$ ]]
+    fi
+}
+
+echo -e "${GREEN}"
+echo "╔══════════════════════════════════════════════════╗"
+echo "║   AI Workstation Bootstrap — Interactive Setup   ║"
+echo "╚══════════════════════════════════════════════════╝"
+echo -e "${NC}"
+
+# ─── IDE Selection ───
+echo -e "${YELLOW}── IDE & Editor ──${NC}"
+INSTALL_VSCODE=false; INSTALL_INTELLIJ=false; INSTALL_VS=false
+
+ask "VS Code (web/TypeScript/Python devs)" "y" && INSTALL_VSCODE=true
+ask "IntelliJ IDEA (Java/Kotlin/Scala devs)" "n" && INSTALL_INTELLIJ=true
+ask "Visual Studio (C#/.NET devs)" "n" && INSTALL_VS=true
+
+# ─── Infrastructure Tools ───
+echo ""
+echo -e "${YELLOW}── Infrastructure & DevOps ──${NC}"
+INSTALL_TF=false; INSTALL_K8S=false; INSTALL_ANSIBLE=false; INSTALL_JENKINS=false; INSTALL_AZDO=false
+
+ask "Terraform (IaC)" "n" && INSTALL_TF=true
+ask "Kubernetes tools (kubectl, helm, k9s)" "n" && INSTALL_K8S=true
+ask "Ansible" "n" && INSTALL_ANSIBLE=true
+ask "Jenkins MCP (CI/CD)" "n" && INSTALL_JENKINS=true
+ask "Azure DevOps MCP" "n" && INSTALL_AZDO=true
+
+# ─── Productivity Tools ───
+echo ""
+echo -e "${YELLOW}── AI Productivity ──${NC}"
+INSTALL_STANDUP=false; INSTALL_MEETILY=false
+
+ask "Automated Standups (git+jira→standup)" "y" && INSTALL_STANDUP=true
+ask "Meeting Transcription (Meetily)" "n" && INSTALL_MEETILY=true
+
+echo ""
+echo -e "${GREEN}Starting installation...${NC}"
+log "=== AI Workstation Bootstrap started ==="
+log "Selections: vscode=$INSTALL_VSCODE intellij=$INSTALL_INTELLIJ vs=$INSTALL_VS tf=$INSTALL_TF k8s=$INSTALL_K8S ansible=$INSTALL_ANSIBLE jenkins=$INSTALL_JENKINS azdo=$INSTALL_AZDO standup=$INSTALL_STANDUP meetily=$INSTALL_MEETILY"
+
+# ─── Core: Ollama + Models ───
+if ! command -v ollama &>/dev/null; then
+    log "Installing Ollama..."
+    brew install ollama 2>/dev/null || curl -fsSL https://ollama.com/install.sh | sh
+fi
+log "Ollama: $(ollama --version)"
+
+pgrep -x ollama >/dev/null || (ollama serve &>/dev/null &); sleep 3
+
+log "Pulling models..."
+ollama pull qwen3.5:4b 2>/dev/null
+ollama pull qwen2.5-coder:1.5b 2>/dev/null
+ollama pull nomic-embed-text 2>/dev/null
+log "Models ready."
+
+# ─── IDE Installs ───
+if $INSTALL_VSCODE; then
+    brew install --cask visual-studio-code 2>/dev/null || true
+    mkdir -p "$HOME/Library/Application Support/Code/User"
+    cp "$CONFIG_SOURCE/vscode/settings.json" "$HOME/Library/Application Support/Code/User/settings.json"
+    code --install-extension Continue.continue 2>/dev/null || true
+    log "VS Code + Continue configured."
+fi
+
+if $INSTALL_INTELLIJ; then
+    brew install --cask intellij-idea 2>/dev/null || true
+    # DevoxxGenie plugin — installed via IDE marketplace on first launch
+    log "IntelliJ installed. Install DevoxxGenie plugin: Settings → Plugins → Search 'DevoxxGenie'"
+    log "Configure: Settings → DevoxxGenie → Provider: Ollama, Model: qwen3.5:4b"
+    cat > "$LOG_DIR/intellij-setup.txt" << 'EOF'
+IntelliJ IDEA — AI Setup:
+1. Open Settings → Plugins → Marketplace
+2. Search "DevoxxGenie" → Install → Restart
+3. Settings → Tools → DevoxxGenie:
+   - LLM Provider: Ollama
+   - Chat Model: qwen3.5:4b
+   - Inline Completion Model: qwen2.5-coder:1.5b
+   - URL: http://localhost:11434
+4. For inline completion: Settings → Plugins → search "Ollama Completion" → Install
+EOF
+    echo -e "${YELLOW}ℹ️  See ~/.ai-bootstrap/intellij-setup.txt for plugin instructions${NC}"
+fi
+
+if $INSTALL_VS; then
+    # Visual Studio (full) — LocalPilot extension
+    log "Visual Studio: Install LocalPilot extension from VS Marketplace"
+    cat > "$LOG_DIR/visualstudio-setup.txt" << 'EOF'
+Visual Studio — AI Setup:
+1. Extensions → Manage Extensions → Search "LocalPilot"
+2. Install "LocalPilot - AI Coding Assistant (Ollama)"
+3. Configure: Tools → Options → LocalPilot:
+   - Ollama URL: http://localhost:11434
+   - Model: qwen2.5-coder:7b
+   - Enable Inline Completion: Yes
+4. Trigger completion: Ctrl+Alt+C
+EOF
+    echo -e "${YELLOW}ℹ️  See ~/.ai-bootstrap/visualstudio-setup.txt for plugin instructions${NC}"
+fi
+
+# ─── Infrastructure Tools ───
+if $INSTALL_TF; then
+    brew install terraform 2>/dev/null || true
+    log "Terraform installed: $(terraform version -json 2>/dev/null | python3 -c 'import json,sys;print(json.load(sys.stdin).get("terraform_version",""))' 2>/dev/null)"
+fi
+
+if $INSTALL_K8S; then
+    brew install kubectl helm k9s 2>/dev/null || true
+    log "K8s tools installed."
+fi
+
+if $INSTALL_ANSIBLE; then
+    brew install ansible 2>/dev/null || true
+    log "Ansible installed: $(ansible --version 2>/dev/null | head -1)"
+fi
+
+# ─── MCP Servers Config ───
+OPENCODE_DIR="$HOME/.opencode"
+mkdir -p "$OPENCODE_DIR"
+cp "$CONFIG_SOURCE/opencode/.opencode.json" "$OPENCODE_DIR/.opencode.json"
+
+# Build MCP config dynamically based on selections
+MCP_CONFIG='{"mcpServers":{'
+MCP_ENTRIES=()
+
+# Always include GitHub
+MCP_ENTRIES+='"github":{"command":"npx","args":["-y","@modelcontextprotocol/server-github"],"env":{"GITHUB_PERSONAL_ACCESS_TOKEN":"${GITHUB_TOKEN}"}}'
+
+# Always include MS365
+MCP_ENTRIES+='"microsoft365":{"command":"npx","args":["-y","@subzone81/ms-365-mcp"],"env":{"MS365_TENANT_ID":"${MS365_TENANT_ID}","MS365_CLIENT_ID":"${MS365_CLIENT_ID}","MS365_CLIENT_SECRET":"${MS365_CLIENT_SECRET}"}}'
+
+# Always include Jira/Confluence
+MCP_ENTRIES+='"jira":{"command":"npx","args":["-y","mcp-server-atlassian"],"env":{"ATLASSIAN_SITE_URL":"${JIRA_URL}","ATLASSIAN_USER_EMAIL":"${JIRA_EMAIL}","ATLASSIAN_API_TOKEN":"${JIRA_API_TOKEN}"}}'
+
+if $INSTALL_K8S; then
+    MCP_ENTRIES+='"kubernetes":{"command":"npx","args":["-y","mcp-server-kubernetes"],"env":{"KUBECONFIG":"${KUBECONFIG:-~/.kube/config}"}}'
+fi
+
+if $INSTALL_TF; then
+    MCP_ENTRIES+='"terraform":{"command":"npx","args":["-y","@hashicorp/terraform-mcp-server"],"env":{}}'
+fi
+
+if $INSTALL_JENKINS; then
+    MCP_ENTRIES+='"jenkins":{"command":"npx","args":["-y","mcp-jenkins"],"env":{"JENKINS_URL":"${JENKINS_URL}","JENKINS_USER":"${JENKINS_USER}","JENKINS_TOKEN":"${JENKINS_TOKEN}"}}'
+fi
+
+if $INSTALL_AZDO; then
+    MCP_ENTRIES+='"azure-devops":{"command":"npx","args":["-y","@microsoft/azure-devops-mcp"],"env":{"AZURE_DEVOPS_ORG":"${AZURE_DEVOPS_ORG}","AZURE_DEVOPS_PAT":"${AZURE_DEVOPS_PAT}"}}'
+fi
+
+# Join entries with commas and write
+JOINED=$(IFS=,; echo "${MCP_ENTRIES[*]}")
+echo "{\"mcpServers\":{$JOINED}}" | python3 -m json.tool > "$OPENCODE_DIR/mcp-servers.json"
+log "MCP config written with $(echo ${#MCP_ENTRIES[@]}) servers."
+
+# ─── Standup Tool ───
+if $INSTALL_STANDUP; then
+    STANDUP_DIR="$HOME/.local/bin"
+    mkdir -p "$STANDUP_DIR"
+    cp "$SCRIPT_DIR/../tools/standup/standup.py" "$STANDUP_DIR/standup.py"
+    cat > "$STANDUP_DIR/standup" << WRAPPER
+#!/bin/bash
+exec python3 "$STANDUP_DIR/standup.py" "\$@"
+WRAPPER
+    chmod +x "$STANDUP_DIR/standup"
+    log "Standup tool installed: run 'standup' from any directory"
+    echo -e "${GREEN}✅ Run 'standup' to generate your daily update${NC}"
+fi
+
+# ─── Meetily ───
+if $INSTALL_MEETILY; then
+    mkdir -p "$HOME/.config/meetily"
+    cp "$CONFIG_SOURCE/meetily/config.toml" "$HOME/.config/meetily/config.toml"
+    log "Meetily config deployed."
+fi
+
+# ─── Done ───
+touch "$LOG_DIR/.installed"
+echo ""
+echo -e "${GREEN}╔══════════════════════════════════════════════╗${NC}"
+echo -e "${GREEN}║   ✅ AI Workstation Bootstrap complete!       ║${NC}"
+echo -e "${GREEN}╚══════════════════════════════════════════════╝${NC}"
+echo ""
+echo "Next steps:"
+echo "  1. Set up MCP tokens: see docs/MCP_SETUP.md"
+$INSTALL_INTELLIJ && echo "  2. Configure IntelliJ: see ~/.ai-bootstrap/intellij-setup.txt"
+$INSTALL_VS && echo "  2. Configure Visual Studio: see ~/.ai-bootstrap/visualstudio-setup.txt"
+echo "  3. Test: opencode chat 'hello'"
+echo ""
+log "=== Bootstrap completed ==="

@@ -86,6 +86,67 @@ export CONFLUENCE_API_TOKEN="your-api-token"  # same token as Jira
 
 ---
 
+---
+
+## 5. Kubernetes (kubectl context access)
+
+**What it enables:** Query pods, deployments, logs, events. Debug failing services from chat.
+
+```bash
+# No extra token needed — uses your existing kubeconfig
+export KUBECONFIG="$HOME/.kube/config"
+
+# Verify: should list your clusters
+kubectl config get-contexts
+```
+
+> The MCP server reads your kubeconfig and operates in the context you have selected.
+
+---
+
+## 6. Terraform
+
+**What it enables:** Query Terraform registry, plan/apply awareness, module docs lookup.
+
+```bash
+# Uses the official HashiCorp MCP server
+# No token needed for registry queries
+# For HCP Terraform (remote state):
+export TF_TOKEN_app_terraform_io="your-terraform-cloud-token"
+```
+
+---
+
+## 7. Azure DevOps
+
+**What it enables:** Query pipelines, work items, repos, pull requests, build status.
+
+```bash
+# 1. Go to https://dev.azure.com/{org}/_usersSettings/tokens
+# 2. Create PAT with scopes: Code (Read), Build (Read), Work Items (Read)
+
+export AZURE_DEVOPS_ORG="https://dev.azure.com/yourorg"
+export AZURE_DEVOPS_PAT="your-personal-access-token"
+```
+
+---
+
+## 8. Jenkins
+
+**What it enables:** Check build status, trigger jobs, read console output, query agent health.
+
+```bash
+# 1. Go to Jenkins → Your User → Configure → API Token → Add new token
+
+export JENKINS_URL="https://jenkins.yourcompany.com"
+export JENKINS_USER="your.username"
+export JENKINS_TOKEN="your-api-token"
+```
+
+**Verify:** `curl -s -u "$JENKINS_USER:$JENKINS_TOKEN" "$JENKINS_URL/api/json" | python3 -c "import json,sys; print(json.load(sys.stdin)['nodeDescription'])"`
+
+---
+
 ## Storing Credentials Securely
 
 ### macOS (Keychain) — Recommended
