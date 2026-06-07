@@ -108,6 +108,7 @@ After login, the engineer gets:
 | [System Requirements](docs/REQUIREMENTS.md) | Minimum/recommended hardware, software prerequisites, disk/network needs |
 | [Developer Guide](docs/DEVELOPER_GUIDE.md) | What you get, how to use each tool, troubleshooting |
 | [Model Selection](docs/MODEL_SELECTION.md) | 8 models compared, hardware requirements, how to switch |
+| [80/20 Routing](docs/ROUTING_80_20.md) | 80% local (free) + 20% cloud — cut AI costs by 90% |
 | [MCP Setup](docs/MCP_SETUP.md) | Token setup for GitHub, Jira, Confluence, MS365, K8s, Terraform, Jenkins, AzDO |
 | [Automated Workflows](docs/WORKFLOWS.md) | Daily standup, pre-commit hooks, weekly reports — cron/launchd setup |
 | [Tools Guide](docs/TOOLS_GUIDE.md) | Quick reference for all 8 CLI tools |
