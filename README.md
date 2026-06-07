@@ -100,3 +100,17 @@ After login, the engineer gets:
 - OpenCode CLI pre-connected to Jira/Confluence via MCP
 - Meetily transcription locked to local Qwen
 - Zero configuration required
+
+## Documentation
+
+| Document | Description |
+|---|---|
+| [Developer Guide](docs/DEVELOPER_GUIDE.md) | What you get, how to use each tool, troubleshooting |
+| [Model Selection](docs/MODEL_SELECTION.md) | 8 models compared, hardware requirements, how to switch |
+| [MCP Setup](docs/MCP_SETUP.md) | Token setup for GitHub, Jira, Confluence, MS365, K8s, Terraform, Jenkins, AzDO |
+| [Automated Workflows](docs/WORKFLOWS.md) | Daily standup, pre-commit hooks, weekly reports — cron/launchd setup |
+| [Tools Guide](docs/TOOLS_GUIDE.md) | Quick reference for all 8 CLI tools |
+| [Bill of Materials](docs/BOM.md) | All packages, models, licenses, and authors |
+| [Risks & Mitigations](docs/RISKS.md) | Security, privacy, compliance, operational risks |
+
+**Website:** [subzone.github.io/ai-workstation-bootstrap](https://subzone.github.io/ai-workstation-bootstrap/)
