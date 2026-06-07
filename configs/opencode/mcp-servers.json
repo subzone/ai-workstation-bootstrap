@@ -1,29 +1,30 @@
 {
   "mcpServers": {
+    "microsoft365": {
+      "command": "npx",
+      "args": ["-y", "@subzone81/ms-365-mcp"],
+      "env": {
+        "MS365_TENANT_ID": "${MS365_TENANT_ID}",
+        "MS365_CLIENT_ID": "${MS365_CLIENT_ID}",
+        "MS365_CLIENT_SECRET": "${MS365_CLIENT_SECRET}"
+      }
+    },
     "jira": {
       "command": "npx",
-      "args": ["-y", "@anthropic/mcp-server-jira"],
+      "args": ["-y", "mcp-server-atlassian"],
       "env": {
-        "JIRA_URL": "${JIRA_URL}",
-        "JIRA_EMAIL": "${JIRA_EMAIL}",
-        "JIRA_API_TOKEN": "${JIRA_API_TOKEN}"
+        "ATLASSIAN_SITE_URL": "${JIRA_URL}",
+        "ATLASSIAN_USER_EMAIL": "${JIRA_EMAIL}",
+        "ATLASSIAN_API_TOKEN": "${JIRA_API_TOKEN}"
       }
     },
     "confluence": {
       "command": "npx",
-      "args": ["-y", "@anthropic/mcp-server-confluence"],
+      "args": ["-y", "mcp-server-atlassian"],
       "env": {
-        "CONFLUENCE_URL": "${CONFLUENCE_URL}",
-        "CONFLUENCE_EMAIL": "${CONFLUENCE_EMAIL}",
-        "CONFLUENCE_API_TOKEN": "${CONFLUENCE_API_TOKEN}"
-      }
-    },
-    "microsoft365": {
-      "command": "npx",
-      "args": ["-y", "@anthropic/mcp-server-microsoft365"],
-      "env": {
-        "MS365_TENANT_ID": "${MS365_TENANT_ID}",
-        "MS365_CLIENT_ID": "${MS365_CLIENT_ID}"
+        "ATLASSIAN_SITE_URL": "${CONFLUENCE_URL}",
+        "ATLASSIAN_USER_EMAIL": "${CONFLUENCE_EMAIL}",
+        "ATLASSIAN_API_TOKEN": "${CONFLUENCE_API_TOKEN}"
       }
     },
     "github": {
