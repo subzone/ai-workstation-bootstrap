@@ -1,0 +1,20 @@
+{
+  "$schema": "https://opencode.ai/schema/config.json",
+  "provider": "ollama",
+  "model": "qwen3.5:4b",
+  "baseUrl": "http://localhost:11434",
+  "temperature": 0.3,
+  "maxTokens": 4096,
+  "tools": {
+    "shell": true,
+    "filesystem": true,
+    "git": true,
+    "codeSearch": true,
+    "webFetch": false
+  },
+  "security": {
+    "allowCloudFallback": false,
+    "allowExternalApis": false,
+    "piiRedaction": true
+  }
+}

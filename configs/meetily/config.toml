@@ -1,0 +1,32 @@
+# Meetily Configuration — Corporate Managed
+# All inference locked to local Ollama. No cloud APIs permitted.
+
+[general]
+language = "en"
+auto_start = true
+minimize_to_tray = true
+
+[transcription]
+provider = "local"
+model = "qwen3.5:4b"
+endpoint = "http://localhost:11434"
+# Cloud providers are disabled — no API key fields accepted
+enable_cloud_providers = false
+
+[summarization]
+provider = "local"
+model = "qwen3.5:4b"
+endpoint = "http://localhost:11434"
+temperature = 0.3
+max_tokens = 2048
+
+[privacy]
+store_transcripts_locally = true
+auto_delete_after_days = 30
+send_telemetry = false
+allow_cloud_processing = false
+
+[audio]
+input_device = "default"
+sample_rate = 16000
+vad_threshold = 0.5
