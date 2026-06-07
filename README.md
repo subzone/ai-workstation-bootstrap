@@ -105,6 +105,7 @@ After login, the engineer gets:
 
 | Document | Description |
 |---|---|
+| [System Requirements](docs/REQUIREMENTS.md) | Minimum/recommended hardware, software prerequisites, disk/network needs |
 | [Developer Guide](docs/DEVELOPER_GUIDE.md) | What you get, how to use each tool, troubleshooting |
 | [Model Selection](docs/MODEL_SELECTION.md) | 8 models compared, hardware requirements, how to switch |
 | [MCP Setup](docs/MCP_SETUP.md) | Token setup for GitHub, Jira, Confluence, MS365, K8s, Terraform, Jenkins, AzDO |
