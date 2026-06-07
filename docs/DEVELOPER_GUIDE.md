@@ -55,7 +55,7 @@ OpenCode connects to corporate tools via MCP servers:
 | Get code suggestions | Just type in VS Code |
 | Ask about code | `Cmd+L` → type question |
 | Code from terminal | `opencode chat "your request"` |
-| Index a repo for RAG | `opencode index .` |
+| Index a repo for RAG | `code-rag index .` |
 | Check AI status | `ollama list` (shows loaded models) |
 | Restart AI backend | `ollama serve` |
 
@@ -121,3 +121,63 @@ Local AI-powered developer tools (all use Ollama, no external calls):
 | **test-gen** | Auto-generate unit tests for a file | `python3 tools/test-gen/generate.py src/utils.py` |
 
 See [docs/TOOLS_GUIDE.md](./TOOLS_GUIDE.md) for full details and pre-commit hook setup.
+
+## Indexing Your Codebase (Local RAG)
+
+The `code-rag` tool indexes your projects locally so any AI assistant (Claude, Kiro, Copilot, Continue, OpenCode) can search your code semantically.
+
+### First-time setup
+
+```bash
+# Index your main project
+cd ~/Code/my-project
+code-rag index . --collection my-project
+
+# Index internal documentation
+code-rag index ~/docs/engineering --collection eng-docs
+
+# Index multiple projects
+code-rag index ~/Code/auth-service --collection auth-service
+code-rag index ~/Code/payment-api --collection payment-api
+```
+
+Indexing a 10K-file project takes ~2 minutes. The index is stored at `~/.code-rag/db/` (~50MB per project).
+
+### Search from terminal
+
+```bash
+code-rag search "how does the auth middleware validate JWT tokens"
+code-rag search "database retry logic" --collection payment-api
+```
+
+### How AI tools use it
+
+The code-rag MCP server runs in the background. When you ask Claude, Kiro, or OpenCode a question about your code, they automatically call `search_codebase` to find relevant files before answering.
+
+Example in Claude/Kiro:
+> "How does our payment retry logic work?"
+>
+> → AI calls code-rag → finds `payment-api/src/retry.ts` → gives you an answer based on YOUR actual code
+
+### Keep the index fresh
+
+Re-run after major changes:
+```bash
+code-rag index ~/Code/my-project --collection my-project
+```
+
+It uses `upsert` — unchanged files are skipped, only modified code is re-embedded.
+
+### What gets indexed
+
+- ✅ All code files (.py, .ts, .js, .go, .rs, .java, .cs, .rb, .tf, etc.)
+- ✅ Documentation (.md, .txt, .rst)
+- ✅ Config files (.yaml, .toml, .json)
+- ❌ Skipped: `node_modules/`, `.git/`, `dist/`, `build/`, `vendor/`, files > 500KB
+- ❌ Skipped: Binary files, images, compiled assets
+
+### List what's indexed
+
+```bash
+code-rag collections
+```
