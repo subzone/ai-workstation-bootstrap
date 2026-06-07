@@ -48,6 +48,39 @@ OpenCode connects to corporate tools via MCP servers:
 
 > Note: MCP tokens are read from your local keychain. First use will prompt you to authenticate once.
 
+## VS Code Extensions (Auto-Installed)
+
+| Extension | Purpose | How it uses Ollama |
+|---|---|---|
+| **Continue** (`Continue.continue`) | AI chat + autocomplete | Connects to `localhost:11434` for chat (qwen3.5:4b) and inline completion (qwen2.5-coder:1.5b) |
+| **Path Intellisense** | File path autocomplete | No AI — quality-of-life |
+| **Code Spell Checker** | Catches typos in code/comments | No AI — quality-of-life |
+
+### Optional extensions (install manually if needed)
+
+```bash
+# MCP support in VS Code (for code-rag integration)
+code --install-extension anthropics.claude-code-mcp
+
+# GitLens (git blame, history)
+code --install-extension eamodio.gitlens
+
+# Error Lens (inline error display)
+code --install-extension usernamehw.errorlens
+```
+
+### Verify Continue is working
+
+1. Open VS Code
+2. Click the Continue icon in the sidebar (two curved arrows)
+3. Type a message — you should see "qwen3.5:4b" in the model selector
+4. Start typing in a code file — ghost text suggestions should appear after ~200ms
+
+If no suggestions appear:
+- Check Ollama is running: `ollama list`
+- Check the model is loaded: `curl http://localhost:11434/api/tags`
+- Restart VS Code
+
 ## Quick Reference
 
 | Task | How |

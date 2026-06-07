@@ -166,6 +166,8 @@ if $INSTALL_VSCODE; then
     mkdir -p "$VSCODE_DIR"
     sed "s/qwen3.5:4b/$PRIMARY_MODEL/g" "$CONFIG_SOURCE/vscode/settings.json" > "$VSCODE_DIR/settings.json"
     code --install-extension Continue.continue 2>/dev/null || true
+    code --install-extension christian-kohler.path-intellisense 2>/dev/null || true
+    code --install-extension streetsidesoftware.code-spell-checker 2>/dev/null || true
     log "VS Code configured with $PRIMARY_MODEL."
 fi
 
