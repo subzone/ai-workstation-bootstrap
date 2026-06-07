@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Workstation Bootstrap</title>
+    <style>
+        :root { --bg: #0d1117; --card: #161b22; --text: #e6edf3; --accent: #58a6ff; --green: #3fb950; --border: #30363d; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+        header { padding: 80px 0 40px; text-align: center; }
+        h1 { font-size: 3em; margin-bottom: 16px; background: linear-gradient(135deg, #58a6ff, #3fb950); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .subtitle { font-size: 1.3em; color: #8b949e; max-width: 700px; margin: 0 auto 32px; }
+        .install-box { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 24px; margin: 24px auto; max-width: 700px; }
+        .install-box code { background: #0d1117; padding: 12px 16px; display: block; border-radius: 4px; font-size: 0.9em; color: var(--green); overflow-x: auto; margin-top: 8px; }
+        .install-box .label { font-size: 0.85em; color: #8b949e; margin-bottom: 4px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 40px 0; }
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 24px; }
+        .card h3 { color: var(--accent); margin-bottom: 8px; }
+        .card p { color: #8b949e; font-size: 0.95em; }
+        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 60px 0; text-align: center; }
+        .stat-num { font-size: 2.5em; font-weight: bold; color: var(--green); }
+        .stat-label { color: #8b949e; font-size: 0.9em; }
+        section { padding: 40px 0; }
+        h2 { font-size: 1.8em; margin-bottom: 24px; }
+        table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+        th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+        th { color: var(--accent); }
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 0.8em; background: #1f6feb22; color: var(--accent); border: 1px solid #1f6feb44; }
+        footer { padding: 40px 0; text-align: center; color: #8b949e; border-top: 1px solid var(--border); margin-top: 60px; }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        @media (max-width: 768px) { .stats { grid-template-columns: repeat(2, 1fr); } h1 { font-size: 2em; } }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>AI Workstation Bootstrap</h1>
+            <p class="subtitle">Zero-cost, local-first AI developer tools for your entire engineering team. No cloud APIs. No data leaks. No subscriptions.</p>
+            <div class="install-box">
+                <div class="label">macOS</div>
+                <code>bash &lt;(curl -fsSL https://raw.githubusercontent.com/subzone/ai-workstation-bootstrap/main/scripts/install-interactive.sh)</code>
+                <div class="label" style="margin-top:12px">Linux</div>
+                <code>bash &lt;(curl -fsSL https://raw.githubusercontent.com/subzone/ai-workstation-bootstrap/main/scripts/install-ubuntu.sh)</code>
+                <div class="label" style="margin-top:12px">Windows (PowerShell)</div>
+                <code>irm https://raw.githubusercontent.com/subzone/ai-workstation-bootstrap/main/scripts/install-windows.ps1 | iex</code>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="stats">
+            <div><div class="stat-num">$0</div><div class="stat-label">Per seat / month</div></div>
+            <div><div class="stat-num">~$140K</div><div class="stat-label">Annual value (20 devs)</div></div>
+            <div><div class="stat-num">100%</div><div class="stat-label">Data stays local</div></div>
+            <div><div class="stat-num">8</div><div class="stat-label">AI tools included</div></div>
+        </div>
+
+        <section>
+            <h2>What Developers Get</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>🔮 Code Autocomplete</h3>
+                    <p>Inline suggestions as you type in VS Code, IntelliJ, or Visual Studio. Powered by local Qwen 2.5 Coder — ~200ms latency.</p>
+                </div>
+                <div class="card">
+                    <h3>💬 AI Chat in Editor</h3>
+                    <p>Ask questions about your code, generate implementations, explain errors. All processed on your GPU — never sent externally.</p>
+                </div>
+                <div class="card">
+                    <h3>🔍 Codebase RAG Search</h3>
+                    <p>Semantic search across your entire codebase. Works with Claude, Kiro, Copilot, Continue — any MCP-compatible tool.</p>
+                </div>
+                <div class="card">
+                    <h3>📋 Automated Standups</h3>
+                    <p>Generates daily updates from git commits, Jira tickets, and GitHub PRs. Posts to Slack/Teams at 9am automatically.</p>
+                </div>
+                <div class="card">
+                    <h3>🔒 Security Scanning</h3>
+                    <p>Pre-commit hook catches hardcoded secrets, SQL injection, XSS, and weak crypto before code is pushed.</p>
+                </div>
+                <div class="card">
+                    <h3>🧪 Test Generation</h3>
+                    <p>Point at a file, get unit tests. Detects your language and test framework automatically.</p>
+                </div>
+                <div class="card">
+                    <h3>📊 Sprint Reports</h3>
+                    <p>Weekly markdown summary for managers — auto-generated from actual git/Jira activity, not manual status updates.</p>
+                </div>
+                <div class="card">
+                    <h3>🐛 Log Explainer</h3>
+                    <p>Pipe any stack trace and get root cause analysis with fix suggestions, cross-referenced against your codebase.</p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Why Local-First?</h2>
+            <table>
+                <tr><th>Concern</th><th>Cloud AI (Copilot, ChatGPT)</th><th>This Setup</th></tr>
+                <tr><td>Data privacy</td><td>Code sent to external servers</td><td>Never leaves your machine</td></tr>
+                <tr><td>DLP compliance</td><td>Requires legal review</td><td>Compliant by design</td></tr>
+                <tr><td>Cost at scale</td><td>$19-50/seat/month</td><td>$0 — runs on existing hardware</td></tr>
+                <tr><td>Internet required</td><td>Yes, always</td><td>No — works offline</td></tr>
+                <tr><td>Vendor lock-in</td><td>Tied to one provider</td><td>Swap models anytime</td></tr>
+                <tr><td>Customizable</td><td>Limited</td><td>Full control — fine-tune on your code</td></tr>
+            </table>
+        </section>
+
+        <section>
+            <h2>Supported Models</h2>
+            <p>Choose during install or switch anytime with <code style="display:inline;padding:2px 6px;background:var(--card)">switch-model &lt;name&gt;</code></p>
+            <table>
+                <tr><th>Model</th><th>Size</th><th>Origin</th><th>Best For</th></tr>
+                <tr><td>qwen3.5:4b</td><td>3.2 GB</td><td>Alibaba</td><td>Default — fast all-rounder</td></tr>
+                <tr><td>deepseek-v3:7b</td><td>4.2 GB</td><td>DeepSeek</td><td>Strong code + reasoning</td></tr>
+                <tr><td>mistral:7b</td><td>4.1 GB</td><td>Mistral AI (France)</td><td>European languages</td></tr>
+                <tr><td>glm4:9b</td><td>5.5 GB</td><td>Zhipu AI</td><td>Bilingual (CN/EN)</td></tr>
+                <tr><td>granite3.1-dense:8b</td><td>4.9 GB</td><td>IBM</td><td>Enterprise compliance</td></tr>
+                <tr><td>llama3.2:3b</td><td>2.0 GB</td><td>Meta</td><td>Lightweight / low RAM</td></tr>
+            </table>
+        </section>
+
+        <section>
+            <h2>Enterprise Deployment</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>Microsoft Intune</h3>
+                    <p>Package as Win32 app. Assign to Azure AD groups. Hardware requirements enforced automatically. Zero developer effort.</p>
+                </div>
+                <div class="card">
+                    <h3>MCP Integrations</h3>
+                    <p>Pre-wired: Jira, Confluence, MS365, GitHub, Kubernetes, Terraform, Azure DevOps, Jenkins. Add your own.</p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>ROI for a 20-Developer Team</h2>
+            <table>
+                <tr><th>Savings Category</th><th>Annual Value</th></tr>
+                <tr><td>License savings (Copilot + ChatGPT + Otter)</td><td>$14,640</td></tr>
+                <tr><td>Developer productivity (15 min/day saved)</td><td>$75,000</td></tr>
+                <tr><td>Reduced code review cycles</td><td>$30,000</td></tr>
+                <tr><td>Faster onboarding</td><td>$20,000</td></tr>
+                <tr><td><strong>Total</strong></td><td><strong>~$140,000/year</strong></td></tr>
+            </table>
+            <p style="color:#8b949e;margin-top:12px">Cost: $0 licensing. ~5 days to set up. 2 days/quarter to maintain.</p>
+        </section>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p><a href="https://github.com/subzone/ai-workstation-bootstrap">GitHub Repository</a> · <a href="https://github.com/subzone/ai-workstation-bootstrap/blob/main/docs/DEVELOPER_GUIDE.md">Developer Guide</a> · <a href="https://github.com/subzone/ai-workstation-bootstrap/blob/main/docs/MODEL_SELECTION.md">Model Guide</a></p>
+            <p style="margin-top:8px">Open source. Zero vendor lock-in. Your code, your machine.</p>
+        </div>
+    </footer>
+</body>
+</html>
