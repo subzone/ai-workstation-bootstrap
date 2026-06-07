@@ -214,3 +214,113 @@ It uses `upsert` — unchanged files are skipped, only modified code is re-embed
 ```bash
 code-rag collections
 ```
+
+## Connecting Code-RAG to Your AI Assistant
+
+The `code-rag` MCP server gives any AI tool semantic search over your indexed codebase. Here's how to connect it to each assistant.
+
+### Claude Code
+
+Edit `~/.claude.json` (or `~/.claude/claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "code-rag": {
+      "command": "uv",
+      "args": ["run", "--directory", "~/.ai-bootstrap/repo/tools/code-rag", "python3", "code_rag.py", "serve"]
+    }
+  }
+}
+```
+
+Then in Claude: *"Search my codebase for how authentication works"* → it calls `search_codebase` automatically.
+
+### GitHub Copilot (VS Code)
+
+Copilot doesn't natively support MCP yet. Use the **Continue** extension as the bridge:
+
+```json
+// In VS Code settings.json → Continue config
+"continue.experimental.modelContextProtocolServers": [
+  {
+    "transport": {
+      "type": "stdio",
+      "command": "uv",
+      "args": ["run", "--directory", "~/.ai-bootstrap/repo/tools/code-rag", "python3", "code_rag.py", "serve"]
+    }
+  }
+]
+```
+
+Use `@codebase` in Continue chat to trigger RAG search.
+
+### Kiro
+
+Add to your project's `.kiro/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "code-rag": {
+      "command": "uv",
+      "args": ["run", "--directory", "~/.ai-bootstrap/repo/tools/code-rag", "python3", "code_rag.py", "serve"],
+      "env": {
+        "OLLAMA_URL": "http://localhost:11434"
+      }
+    }
+  }
+}
+```
+
+Kiro will see `search_codebase`, `index_project`, and `list_indexed_collections` as available tools.
+
+### Antigravity
+
+Add to your Antigravity MCP config:
+
+```json
+{
+  "code-rag": {
+    "command": "uv",
+    "args": ["run", "--directory", "~/.ai-bootstrap/repo/tools/code-rag", "python3", "code_rag.py", "serve"]
+  }
+}
+```
+
+### OpenCode
+
+Already configured if you ran the bootstrap. Verify in `~/.config/opencode/mcp-servers.json`:
+
+```json
+{
+  "code-rag": {
+    "command": "uv",
+    "args": ["run", "--directory", "~/.ai-bootstrap/repo/tools/code-rag", "python3", "code_rag.py", "serve"]
+  }
+}
+```
+
+### Any MCP-compatible tool
+
+The server uses stdio transport (JSON-RPC 2.0). The command is always:
+
+```bash
+uv run --directory ~/.ai-bootstrap/repo/tools/code-rag python3 code_rag.py serve
+```
+
+### Available MCP tools
+
+| Tool | What it does |
+|---|---|
+| `search_codebase` | Semantic search — returns file paths, line numbers, and code snippets |
+| `index_project` | Index a new directory (run once per project) |
+| `list_indexed_collections` | Show what's been indexed |
+
+### Example queries any assistant can answer after indexing
+
+- "How does the payment retry logic work?"
+- "Where is the database connection pool configured?"
+- "Show me all API endpoint handlers"
+- "What tests exist for the auth module?"
+- "Find code related to rate limiting"
