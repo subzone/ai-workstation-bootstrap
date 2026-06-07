@@ -182,8 +182,7 @@ fi
 # ─── MCP Servers Config ───
 OPENCODE_DIR="$HOME/.config/opencode"
 mkdir -p "$OPENCODE_DIR"
-sed "s/qwen3.5:4b/$PRIMARY_MODEL/g" "$CONFIG_SOURCE/opencode/.opencode.json" \
-    > "$OPENCODE_DIR/.opencode.json"
+sed "s/qwen3.5:4b/$PRIMARY_MODEL/g" "$CONFIG_SOURCE/opencode/config.json" > "$OPENCODE_DIR/config.json"
 
 # Build MCP config dynamically based on selections
 python3 - "$OPENCODE_DIR/mcp-servers.json" "$INSTALL_K8S" "$INSTALL_TF" "$INSTALL_JENKINS" "$INSTALL_AZDO" << 'PYEOF'
