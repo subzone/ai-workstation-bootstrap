@@ -184,38 +184,24 @@ sed "s/qwen3.5:4b/$PRIMARY_MODEL/g" "$CONFIG_SOURCE/opencode/.opencode.json" \
     > "$OPENCODE_DIR/.opencode.json"
 
 # Build MCP config dynamically based on selections
-MCP_CONFIG='{"mcpServers":{'
-MCP_ENTRIES=()
+python3 - "$OPENCODE_DIR/mcp-servers.json" "$INSTALL_K8S" "$INSTALL_TF" "$INSTALL_JENKINS" "$INSTALL_AZDO" << 'PYEOF'
+import json, sys
+out_path, k8s, tf, jenkins, azdo = sys.argv[1], sys.argv[2]=="true", sys.argv[3]=="true", sys.argv[4]=="true", sys.argv[5]=="true"
 
-# Always include GitHub
-MCP_ENTRIES+='"github":{"command":"npx","args":["-y","@modelcontextprotocol/server-github"],"env":{"GITHUB_PERSONAL_ACCESS_TOKEN":"${GITHUB_TOKEN}"}}'
+servers = {
+    "github": {"command": "npx", "args": ["-y", "@modelcontextprotocol/server-github"], "env": {"GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"}},
+    "microsoft365": {"command": "npx", "args": ["-y", "@subzone81/ms-365-mcp"], "env": {"MS365_TENANT_ID": "${MS365_TENANT_ID}", "MS365_CLIENT_ID": "${MS365_CLIENT_ID}", "MS365_CLIENT_SECRET": "${MS365_CLIENT_SECRET}"}},
+    "jira": {"command": "npx", "args": ["-y", "mcp-server-atlassian"], "env": {"ATLASSIAN_SITE_URL": "${JIRA_URL}", "ATLASSIAN_USER_EMAIL": "${JIRA_EMAIL}", "ATLASSIAN_API_TOKEN": "${JIRA_API_TOKEN}"}},
+}
+if k8s: servers["kubernetes"] = {"command": "npx", "args": ["-y", "mcp-server-kubernetes"], "env": {"KUBECONFIG": "~/.kube/config"}}
+if tf: servers["terraform"] = {"command": "npx", "args": ["-y", "@hashicorp/terraform-mcp-server"], "env": {}}
+if jenkins: servers["jenkins"] = {"command": "npx", "args": ["-y", "mcp-jenkins"], "env": {"JENKINS_URL": "${JENKINS_URL}", "JENKINS_USER": "${JENKINS_USER}", "JENKINS_TOKEN": "${JENKINS_TOKEN}"}}
+if azdo: servers["azure-devops"] = {"command": "npx", "args": ["-y", "@microsoft/azure-devops-mcp"], "env": {"AZURE_DEVOPS_ORG": "${AZURE_DEVOPS_ORG}", "AZURE_DEVOPS_PAT": "${AZURE_DEVOPS_PAT}"}}
 
-# Always include MS365
-MCP_ENTRIES+='"microsoft365":{"command":"npx","args":["-y","@subzone81/ms-365-mcp"],"env":{"MS365_TENANT_ID":"${MS365_TENANT_ID}","MS365_CLIENT_ID":"${MS365_CLIENT_ID}","MS365_CLIENT_SECRET":"${MS365_CLIENT_SECRET}"}}'
-
-# Always include Jira/Confluence
-MCP_ENTRIES+='"jira":{"command":"npx","args":["-y","mcp-server-atlassian"],"env":{"ATLASSIAN_SITE_URL":"${JIRA_URL}","ATLASSIAN_USER_EMAIL":"${JIRA_EMAIL}","ATLASSIAN_API_TOKEN":"${JIRA_API_TOKEN}"}}'
-
-if $INSTALL_K8S; then
-    MCP_ENTRIES+='"kubernetes":{"command":"npx","args":["-y","mcp-server-kubernetes"],"env":{"KUBECONFIG":"${KUBECONFIG:-~/.kube/config}"}}'
-fi
-
-if $INSTALL_TF; then
-    MCP_ENTRIES+='"terraform":{"command":"npx","args":["-y","@hashicorp/terraform-mcp-server"],"env":{}}'
-fi
-
-if $INSTALL_JENKINS; then
-    MCP_ENTRIES+='"jenkins":{"command":"npx","args":["-y","mcp-jenkins"],"env":{"JENKINS_URL":"${JENKINS_URL}","JENKINS_USER":"${JENKINS_USER}","JENKINS_TOKEN":"${JENKINS_TOKEN}"}}'
-fi
-
-if $INSTALL_AZDO; then
-    MCP_ENTRIES+='"azure-devops":{"command":"npx","args":["-y","@microsoft/azure-devops-mcp"],"env":{"AZURE_DEVOPS_ORG":"${AZURE_DEVOPS_ORG}","AZURE_DEVOPS_PAT":"${AZURE_DEVOPS_PAT}"}}'
-fi
-
-# Join entries with commas and write
-JOINED=$(IFS=,; echo "${MCP_ENTRIES[*]}")
-echo "{\"mcpServers\":{$JOINED}}" | python3 -m json.tool > "$OPENCODE_DIR/mcp-servers.json"
-log "MCP config written with $(echo ${#MCP_ENTRIES[@]}) servers."
+json.dump({"mcpServers": servers}, open(out_path, "w"), indent=2)
+print(f"MCP config: {len(servers)} servers", file=sys.stderr)
+PYEOF
+log "MCP config written."
 
 # ─── Standup Tool ───
 if $INSTALL_STANDUP; then
