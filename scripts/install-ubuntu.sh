@@ -2,25 +2,22 @@
 set -euo pipefail
 
 # AI Workstation Bootstrap — Linux (Ubuntu/Debian/Fedora)
-# Run: curl -fsSL https://raw.githubusercontent.com/subzone/ai-workstation-bootstrap/main/scripts/install-ubuntu.sh | bash
+# Run: bash <(curl -fsSL https://raw.githubusercontent.com/subzone/ai-workstation-bootstrap/main/scripts/install-ubuntu.sh)
 # Or:  git clone ... && bash scripts/install-ubuntu.sh
 
 LOG_DIR="${HOME}/.ai-bootstrap"
 LOG_FILE="$LOG_DIR/install.log"
 mkdir -p "$LOG_DIR"
 
-# If running via curl|bash, clone the repo first
-if [ -z "${BASH_SOURCE[0]:-}" ] || [ ! -f "${BASH_SOURCE[0]:-/nonexistent}" ]; then
-    REPO_DIR="$LOG_DIR/repo"
-    if [ ! -d "$REPO_DIR" ]; then
-        echo "Downloading bootstrap repository..."
-        git clone --depth 1 https://github.com/subzone/ai-workstation-bootstrap.git "$REPO_DIR" 2>/dev/null
-    fi
-    SCRIPT_DIR="$REPO_DIR/scripts"
-    CONFIG_SOURCE="$REPO_DIR/configs"
-else
-    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    CONFIG_SOURCE="$SCRIPT_DIR/../configs"
+# Resolve config source — clone repo if not running from local checkout
+REPO_DIR="$LOG_DIR/repo"
+SCRIPT_DIR="${REPO_DIR}/scripts"
+CONFIG_SOURCE="${REPO_DIR}/configs"
+
+if [ ! -d "$CONFIG_SOURCE" ]; then
+    echo "📦 Downloading bootstrap repository..."
+    rm -rf "$REPO_DIR"
+    git clone --depth 1 https://github.com/subzone/ai-workstation-bootstrap.git "$REPO_DIR"
 fi
 
 mkdir -p "$LOG_DIR"
