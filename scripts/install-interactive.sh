@@ -17,6 +17,9 @@ if [ ! -d "$CONFIG_SOURCE" ]; then
     echo "📦 Downloading bootstrap repository..."
     rm -rf "$REPO_DIR"
     git clone --depth 1 https://github.com/subzone/ai-workstation-bootstrap.git "$REPO_DIR"
+else
+    echo "📦 Updating bootstrap repository..."
+    git -C "$REPO_DIR" pull --ff-only 2>/dev/null || (rm -rf "$REPO_DIR" && git clone --depth 1 https://github.com/subzone/ai-workstation-bootstrap.git "$REPO_DIR")
 fi
 
 mkdir -p "$LOG_DIR"
