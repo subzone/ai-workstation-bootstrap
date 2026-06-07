@@ -229,9 +229,9 @@ if $INSTALL_ANSIBLE; then
 fi
 
 # ─── OpenCode + MCP Config ───
-OPENCODE_DIR="$HOME/.opencode"
+OPENCODE_DIR="$HOME/.config/opencode"
 mkdir -p "$OPENCODE_DIR"
-sed "s/qwen3.5:4b/$PRIMARY_MODEL/g" "$CONFIG_SOURCE/opencode/.opencode.json" > "$OPENCODE_DIR/.opencode.json"
+sed "s/qwen3.5:4b/$PRIMARY_MODEL/g" "$CONFIG_SOURCE/opencode/config.json" > "$OPENCODE_DIR/config.json"
 cp "$CONFIG_SOURCE/opencode/mcp-servers.json" "$OPENCODE_DIR/mcp-servers.json"
 log "OpenCode configured."
 

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "ollama/qwen3.5:4b",
+  "provider": {
+    "ollama": {
+      "npm": "@ai-sdk/openai-compatible",
+      "options": {
+        "baseURL": "http://127.0.0.1:11434/v1"
+      },
+      "models": {
+        "qwen3.5:4b": {},
+        "qwen3.5:9b": {},
+        "qwen2.5-coder:7b": {},
+        "qwen2.5-coder:1.5b": {},
+        "deepseek-v3:7b": {},
+        "mistral:7b": {},
+        "glm4:9b": {},
+        "granite3.1-dense:8b": {},
+        "llama3.2:3b": {},
+        "gemma3:4b": {}
+      }
+    }
+  }
+}

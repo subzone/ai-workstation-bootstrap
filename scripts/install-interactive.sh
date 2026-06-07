@@ -178,7 +178,7 @@ if $INSTALL_ANSIBLE; then
 fi
 
 # ─── MCP Servers Config ───
-OPENCODE_DIR="$HOME/.opencode"
+OPENCODE_DIR="$HOME/.config/opencode"
 mkdir -p "$OPENCODE_DIR"
 sed "s/qwen3.5:4b/$PRIMARY_MODEL/g" "$CONFIG_SOURCE/opencode/.opencode.json" \
     > "$OPENCODE_DIR/.opencode.json"
