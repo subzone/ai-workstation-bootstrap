@@ -24,13 +24,29 @@ This must appear in at least one of: README, LICENSE file, credits page, or abou
 
 ## 4. No Warranty
 
-This software is provided "AS IS" without warranty of any kind. The author is not liable for:
+This software is provided "AS IS" without warranty of any kind, express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, and non-infringement. The author is not liable for:
 - Data loss, system damage, or security incidents arising from use
 - Accuracy, reliability, or suitability of AI model outputs
 - Compatibility with your specific hardware, software, or infrastructure
 - Compliance with regulations specific to your jurisdiction or industry
+- Actions taken based on AI-generated code, recommendations, or analysis
+- Security vulnerabilities introduced by AI-generated code
+- Third-party model behavior, biases, or training data provenance
 
-## 5. AI Output Disclaimer
+## 5. Limitation of Liability
+
+IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING BUT NOT LIMITED TO PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES, LOSS OF USE, DATA, OR PROFITS, OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+## 6. Indemnification
+
+You agree to indemnify and hold harmless the author from any claims, damages, losses, or expenses (including legal fees) arising from:
+- Your use or deployment of this software
+- AI outputs generated during your use
+- Your violation of these terms
+- Your failure to comply with third-party licenses (see BOM.md)
+- Security incidents on systems where this software is deployed
+
+## 7. AI Output Disclaimer
 
 This toolkit configures AI models that generate code, text, and recommendations. These outputs:
 - May contain errors, bugs, or security vulnerabilities
@@ -38,18 +54,18 @@ This toolkit configures AI models that generate code, text, and recommendations.
 - Do not constitute professional advice (legal, security, medical, financial)
 - Are the responsibility of the user, not the tool author
 
-## 6. Third-Party Components
+## 8. Third-Party Components
 
 This software integrates with third-party tools and models (see [BOM.md](docs/BOM.md)). Each component is governed by its own license. The author of this bootstrap does not warrant or endorse any third-party component.
 
-## 7. Data & Privacy
+## 9. Data & Privacy
 
 - This software does not collect, transmit, or process any user data
 - All AI inference runs locally on the user's machine
 - MCP integrations connect to corporate tools using the user's own credentials
 - The author has no access to any data processed by this software
 
-## 8. Restrictions
+## 10. Restrictions
 
 You may **not**:
 - Remove or obscure the attribution requirement
@@ -57,11 +73,11 @@ You may **not**:
 - Use this software to build tools that facilitate illegal activity
 - Redistribute the AI models themselves under different license terms than their original licenses
 
-## 9. Termination
+## 11. Termination
 
 These terms apply for as long as you use the software. If you violate the attribution requirement, your rights under this license are automatically revoked.
 
-## 10. Contact
+## 12. Contact
 
 For questions, commercial licensing, or partnership inquiries:
 - GitHub: [@subzone](https://github.com/subzone)
