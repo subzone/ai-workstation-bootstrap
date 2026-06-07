@@ -115,3 +115,8 @@ After login, the engineer gets:
 | [Risks & Mitigations](docs/RISKS.md) | Security, privacy, compliance, operational risks |
 
 **Website:** [subzone.github.io/ai-workstation-bootstrap](https://subzone.github.io/ai-workstation-bootstrap/)
+
+## License & Terms
+
+- [LICENSE](LICENSE) — MIT with Attribution (code) + CC BY 4.0 (docs)
+- [Terms of Use](TERMS_OF_USE.md) — Usage conditions, warranty disclaimer, AI output disclaimer
