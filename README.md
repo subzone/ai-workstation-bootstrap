@@ -17,18 +17,31 @@ Zero cloud API keys. Zero data exfiltration. Full DLP compliance.
 ```
 ai-workstation-bootstrap/
 ├── scripts/
-│   ├── install-windows.ps1        # PowerShell for Intune (Windows)
-│   └── install-ubuntu.sh          # Bash for Intune (Linux/WSL)
+│   ├── install-interactive.sh     # Interactive installer (macOS)
+│   ├── install-macos.sh           # Non-interactive macOS
+│   ├── install-ubuntu.sh          # Interactive installer (Linux)
+│   └── install-windows.ps1       # PowerShell for Intune (Windows)
 ├── configs/
-│   ├── vscode/
-│   │   └── settings.json          # Enforces local models, disables cloud AI
-│   ├── opencode/
-│   │   ├── .opencode.json         # Points OpenCode to local Qwen 4B
-│   │   └── mcp-servers.json       # Pre-configures Jira, Confluence, MS365 MCPs
-│   ├── meetily/
-│   │   └── config.toml            # Locks to localhost:11434, no cloud APIs
-│   └── ollama/
-│       └── Pull-Models.ps1        # Downloads approved models
+│   ├── vscode/settings.json       # Local AI, Copilot disabled
+│   ├── opencode/.opencode.json    # Local model, no cloud
+│   ├── opencode/mcp-servers.json  # Jira, Confluence, MS365, K8s, TF, Jenkins, AzDO
+│   ├── meetily/config.toml        # Locked to localhost
+│   └── ollama/Pull-Models.ps1     # Model provisioning
+├── tools/
+│   ├── standup/                   # Daily standup from git+Jira
+│   ├── code-rag/                  # Local RAG MCP server (universal)
+│   ├── code-review/               # AI code review (pre-commit)
+│   ├── security-scan/             # Secret/vuln detection
+│   ├── log-explainer/             # Stack trace → root cause
+│   ├── sprint-report/             # Weekly team report
+│   ├── dep-audit/                 # Dependency vulnerability audit
+│   ├── test-gen/                  # Auto-generate unit tests
+│   └── switch-model               # Reconfigure all tools to new model
+├── docs/
+│   ├── DEVELOPER_GUIDE.md         # What you get, how to use it
+│   ├── MCP_SETUP.md               # Token setup for all MCPs
+│   ├── MODEL_SELECTION.md         # 8 models, hardware reqs, switching
+│   └── TOOLS_GUIDE.md             # Quick reference for all tools
 └── README.md
 ```
 
@@ -50,9 +63,9 @@ ai-workstation-bootstrap/
    - GPU present (WMI: `Win32_VideoController WHERE AdapterRAM > 4294967296`)
 6. **Assignment:** Required → `Engineering_Team` group
 
-### Linux (Ubuntu)
+### Linux (Ubuntu/Debian/Fedora)
 ```bash
-curl -fsSL https://raw.githubusercontent.com/subzone/ai-workstation-bootstrap/main/scripts/install-ubuntu.sh | sudo bash
+bash <(curl -fsSL https://raw.githubusercontent.com/subzone/ai-workstation-bootstrap/main/scripts/install-ubuntu.sh)
 ```
 
 ## Security & Compliance
